@@ -13,17 +13,17 @@ search, list, show, open, clone, reopen, edit, label, comment
   require 'giic'
 
   giic = Giic.new('Sixeight', 'giic')
-  giic.list.issues.each do |issue|
+  giic.list.each do |issue|
     puts issue.title
   end
 
   giic.login!('login name', 'api token')
 
   res = giic.login.open('awsome idea', 'I found that an awsome idea ...')
-  p res.issue.number
+  p res.number
 
   giic.login.with_project(onother) do |user|
-    p user.label(:add, 5, 'bug').labels
+    p user.add_label(5, 'bug')
   end
 
 == REQUIREMENTS:
