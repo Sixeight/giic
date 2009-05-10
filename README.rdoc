@@ -1,0 +1,42 @@
+= Giic
+
+== DESCRIPTION:
+
+Giic is a client of the github-issues API interface.
+
+== FEATURES:
+
+search, list, show, open, clone, reopen, edit, label, comment
+
+== USAGE:
+
+  require 'giic'
+
+  giic = Giic.new('Sixeight', 'giic')
+  giic.list['issues'].each do |issue|
+    puts issue['title']
+  end
+
+  giic.login!('login name', 'api token')
+
+  res = giic.login.open('awsome idea', 'I found that an awsome idea ...')
+  p res['issue']['number']
+
+  giic.login.with_project(onother) do |user|
+    p user.label(:add, 5, 'bug')['labels']
+  end
+
+== REQUIREMENTS:
+
+* Typhoeus
+
+Install:
+
+ gem install pauldix-typhoeus -s http://gems.github.com
+
+== TODO:
+
+* Write a test
+* Write a document
+* and more more more
+
