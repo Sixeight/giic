@@ -6,8 +6,8 @@ require 'typhoeus'
 require 'yaml'
 
 # TODO: must find a better way to get same result
-class Hash
-  module CoreExt
+class Hash # :nodoc:
+  module CoreExt # :nodoc
     def method_missing(meth, *args)
       if value = self[meth] || self[meth.to_s]
         return value
@@ -18,6 +18,11 @@ class Hash
   include CoreExt
 end
 
+#
+# == Giic
+#
+# Giic is a client of the github-issues API interface.
+#
 class Giic
 
   VERSION = '0.0.1'
@@ -37,18 +42,26 @@ class Giic
     @user, @repo = user, repo
   end
 
+  # search issue
+  # #=> issues
   def search(query, state = 'open')
     back :issues, Core.search(:user => @user, :repo => @repo, :state => state, :search_term => query)
   end
 
+  # list issues
+  # #=> issues
   def list(state = 'open')
     back :issues, Core.list(:user => @user, :repo => @repo, :state => state)
   end
 
+  # show specific issue
+  # #=> issue
   def show(number)
     back :issue, Core.show(:user => @user, :repo => @repo, :number => number)
   end
 
+  # get user instance for POST request
+  # #=> Instance of Giic::User
   def login(login = nil, token = nil)
     unless [login, token].all?
       raise 'You must login at least onece' unless @login_user
@@ -57,11 +70,12 @@ class Giic
     User.new login, token, self
   end
 
+  # login github
   def login!(login, token)
     @login_user = login(login, token)
   end
 
-  def back(default, result)
+  def back(default, result) # :nodoc:
     if result.has_key? 'error'
       raise APIError.new(result, caller)
     end
@@ -74,21 +88,29 @@ class Giic
       @project = project
     end
 
+    # open new issue
+    # #=> issue
     def open(title, body)
       back :issue, Giic::Core.open(:user => @project.user, :repo => @project.repo,
                                    :params => { :title => title, :body => body }.merge(authentication_data))
     end
 
+    # close issue
+    # #=> issue
     def close(number)
       back :issue, Giic::Core.close(:user => @project.user, :repo => @project.repo, :number => number,
                                     :params => authentication_data)
     end
 
+    # reopen issue
+    # #=> issue
     def reopen(number)
       back :issue, Giic::Core.reopen(:user => @project.user, :repo => @project.repo, :number => number,
                                      :params => authentication_data)
     end
 
+    # edit issue
+    # #=> issue
     def edit(number, body, title = nil)
       edit_data = { :body => body }
       edit_data.merge!(:title => title) if title
@@ -96,20 +118,28 @@ class Giic
                                    :params => edit_data.merge(authentication_data))
     end
 
+    # to operate label for issue
+    # #=> labels
     def label(operate, label, number)
       back :labels, Giic::Core.label(:user => @project.user, :repo => @project.repo, :number => number,
                                      :operate => operate, :label => label,
                                      :params => authentication_data)
     end
 
+    # add label to issue
+    # #=> labels
     def add_label(label, number)
       label 'add', number, label
     end
 
+    # remove label from issue
+    # #=> labels
     def remove_label(label, number)
       label 'remove', number, label
     end
 
+    # post comment to issue
+    # #=> comment
     def comment(number, comment)
       back :comment, Giic::Core.comment(:user => @project.user, :repo => @project.repo, :number => number,
                                          :params => { :comment => comment }.merge(authentication_data))
@@ -120,6 +150,11 @@ class Giic
       @project = project
     end
 
+    # swap using project temporarily. e.g.)
+    #
+    #  proj.login.with_project({:repo => 'other'}) do |user|
+    #    user.open('new issue', 'I have a lot of bugs')
+    #  end
     def with_project(project)
       original = @project
       @project = case project
@@ -139,15 +174,16 @@ class Giic
 
     private
 
-    def authentication_data
+    def authentication_data # :nodoc:
       { :login => @login, :token => @token }
     end
 
-    def back(default, result)
+    def back(default, result) # :nodoc:
       @project.back default, result
     end
   end
 
+  # Core class is the Giic core that using Typhoeus library
   class Core
     include Typhoeus
     remote_defaults :base_uri   => 'http://github.com/api/v2/yaml/issues',
