@@ -5,6 +5,7 @@ require 'rubygems'
 require 'typhoeus'
 require 'yaml'
 
+# TODO: must find a better way to get same result
 class Hash
   module CoreExt
     def method_missing(meth, *args)
