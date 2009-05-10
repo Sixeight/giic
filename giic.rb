@@ -128,7 +128,9 @@ class Giic
     include Typhoeus
     remote_defaults :base_uri   => 'http://github.com/api/v2/yaml/issues',
                     :on_success => lambda {|responce| YAML.load(responce.body) },
-                    :on_failure => lambda {|responce| warn "Error occured: #{responce.code}" }
+                    :on_failure => lambda {|responce| { 'error' => { 'error'    => 'connection error',
+                                                                     'responce' => responce,
+                                                                     'code'     => responce.code }}}
 
     define_remote_method :search,  :path => '/search/:user/:repo/:state/:search_term'
     define_remote_method :list,    :path => '/list/:user/:repo/:state'
