@@ -19,14 +19,16 @@ class Hash
 end
 
 class Giic
+
   attr_reader :user, :repo
 
   class APIError < Exception
-    attr_reader :responce
-    def initialize(responce)
-      @responce = responce
-      super responce['error']
+    attr_reader :responce, :backtrace
+    def initialize(responce, backtrace)
+      @responce, @backtrace = responce, backtrace
+      super responce['error'].first['error']
     end
+    def inspect; message end
   end
 
   def initialize(user, repo)
@@ -59,7 +61,7 @@ class Giic
 
   def back(default, result)
     if result.has_key? 'error'
-      raise APIError.new(result)
+      raise APIError.new(result, caller)
     end
     result[default.to_s]
   end
