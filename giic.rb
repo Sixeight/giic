@@ -20,7 +20,7 @@ end
 
 class Giic
 
-  VERSION = '0.0.0'
+  VERSION = '0.0.1'
 
   attr_reader :user, :repo
 
