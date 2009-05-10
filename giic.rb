@@ -20,6 +20,8 @@ end
 
 class Giic
 
+  VERSION = '0.0.0'
+
   attr_reader :user, :repo
 
   class APIError < Exception
