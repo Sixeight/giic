@@ -129,13 +129,13 @@ class Giic
     # add label to issue
     # #=> labels
     def add_label(label, number)
-      label 'add', number, label
+      label 'add', label, number
     end
 
     # remove label from issue
     # #=> labels
     def remove_label(label, number)
-      label 'remove', number, label
+      label 'remove', label, number
     end
 
     # post comment to issue
