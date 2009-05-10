@@ -1,0 +1,66 @@
+#! /usr/bin/env ruby
+# -*- coding: utf-8 -*-
+
+$KCODE = 'utf-8' unless ''.respond_to? :chr
+
+require File.dirname(__FILE__) + '/../giic'
+require 'pp'
+
+puts "iGiic version 0.0.1 (Giic #{Giic::VERSION})"
+loop do
+  begin
+    print '> '
+    case command = gets.chomp
+    when /^set/
+      _, user, repo = command.split
+      user or (print('user = '); user = gets.chomp)
+      repo or (print('repo = '); repo = gets.chomp)
+      @giic = Giic.new(user, repo)
+      puts 'done'
+    when /^login/
+      unless @giic
+        warn 'you have to call "set"'
+        next
+      end
+      _, login, token = command.split
+      login or (print('login = '); login = gets.chomp)
+      token or (print('token = '); token = gets.chomp)
+      @giic.login!(login, token)
+      @__login = true
+      puts 'done'
+    when 'exit', 'e', 'quit', 'q'
+      break
+    when /^list/, /^show/, /^search/
+      unless @giic
+        warn 'you have to call "set"'
+        next
+      end
+      action, *args = command.split
+      pp @giic.__send__(action, *args)
+    when 'help'
+      @help ||= %w[
+        set login help exit quit
+        search list show open close
+        reopen edit label add_label
+        remove_label comment
+      ]
+      puts @help
+    when /^open/, /^close/, /^reopen/, /^edit/, /^label/, /^add_label/, /^remove_label/, /^comment/
+      unless @__login
+        warn 'you have to call "set"' unless @giic
+        warn 'you have to call "login"'
+        next
+      end
+      action, *args = command.split
+      pp @giic.login.__send__(action, *args)
+    else
+      warn "no such command: #{command}"
+    end
+  rescue Giic::APIError => e
+    warn e
+  rescue => e
+    warn e
+  end
+end
+puts 'bye'
+
