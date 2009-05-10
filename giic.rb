@@ -111,7 +111,7 @@ class Giic
     end
 
     def comment(number, comment)
-      back :comment, Giic::Core.commebt(:user => @project.user, :repo => @project.repo, :number => number,
+      back :comment, Giic::Core.comment(:user => @project.user, :repo => @project.repo, :number => number,
                                          :params => { :comment => comment }.merge(authentication_data))
     end
 
