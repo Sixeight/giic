@@ -110,7 +110,7 @@ class Giic
       label 'remove', number, label
     end
 
-    def comment(comment)
+    def comment(number, comment)
       back :comment, Giic::Core.commebt(:user => @project.user, :repo => @project.repo, :number => number,
                                          :params => { :comment => comment }.merge(authentication_data))
     end
