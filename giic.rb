@@ -94,17 +94,17 @@ class Giic
                                    :params => edit_data.merge(authentication_data))
     end
 
-    def label(operate, number, label)
+    def label(operate, label, number)
       back :labels, Giic::Core.label(:user => @project.user, :repo => @project.repo, :number => number,
                                      :operate => operate, :label => label,
                                      :params => authentication_data)
     end
 
-    def add_label(number, label)
+    def add_label(label, number)
       label 'add', number, label
     end
 
-    def remove_label(number, label)
+    def remove_label(label, number)
       label 'remove', number, label
     end
 

@@ -23,7 +23,7 @@ search, list, show, open, clone, reopen, edit, label, comment
   p res.number
 
   giic.login.with_project(onother) do |user|
-    p user.add_label(5, 'bug')
+    p user.add_label('bug', 5)
   end
 
 == REQUIREMENTS:
