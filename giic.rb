@@ -5,6 +5,18 @@ require 'rubygems'
 require 'typhoeus'
 require 'yaml'
 
+class Hash
+  module CoreExt
+    def method_missing(meth, *args)
+      if value = self[meth] || self[meth.to_s]
+        return value
+      end
+      super
+    end
+  end
+  include CoreExt
+end
+
 class Giic
   attr_reader :user, :repo
 
