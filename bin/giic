@@ -3,7 +3,7 @@
 
 $KCODE = 'utf-8' unless ''.respond_to? :chr
 
-require File.dirname(__FILE__) + '/../giic'
+require File.dirname(__FILE__) + '/../lib/giic'
 require 'pp'
 
 puts "iGiic version 0.0.1 (Giic #{Giic::VERSION})"
