@@ -29,7 +29,7 @@ You can install Giic using Rubygems:
 
   giic.login!('login name', 'api token')
 
-  res = giic.login.open('awsome idea', 'I found that an awsome idea ...')
+  res = giic.login.open('awesome idea', 'I found that an awesome idea ...')
   p res.number
 
   giic.login.with_project(onother) do |user|
