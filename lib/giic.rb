@@ -1,6 +1,12 @@
 #! /usr/bin/env ruby
 # -*- coding: utf-8 -*-
 
+#
+# == Giic
+#
+# Giic is a client of the github-issues API interface.
+#
+
 require 'rubygems'
 require 'typhoeus'
 require 'yaml'
@@ -18,11 +24,6 @@ class Hash # :nodoc:
   include CoreExt
 end
 
-#
-# == Giic
-#
-# Giic is a client of the github-issues API interface.
-#
 class Giic
 
   VERSION = '0.0.1'
@@ -45,19 +46,19 @@ class Giic
   # search issue
   # #=> issues
   def search(query, state = 'open')
-    back :issues, Core.search(:user => @user, :repo => @repo, :state => state, :search_term => query)
+    Core.search(:user => @user, :repo => @repo, :state => state, :search_term => query)
   end
 
   # list issues
   # #=> issues
   def list(state = 'open')
-    back :issues, Core.list(:user => @user, :repo => @repo, :state => state)
+    Core.list(:user => @user, :repo => @repo, :state => state)
   end
 
   # show specific issue
   # #=> issue
   def show(number)
-    back :issue, Core.show(:user => @user, :repo => @repo, :number => number)
+    Core.show(:user => @user, :repo => @repo, :number => number)
   end
 
   # get user instance for POST request
@@ -75,7 +76,8 @@ class Giic
     @login_user = login(login, token)
   end
 
-  def back(default, result) # :nodoc:
+  # take values or error from responce
+  def self.take(default, result)
     if result.has_key? 'error'
       raise APIError.new(result, caller)
     end
@@ -91,21 +93,21 @@ class Giic
     # open new issue
     # #=> issue
     def open(title, body)
-      back :issue, Giic::Core.open(:user => @project.user, :repo => @project.repo,
+      Giic::Core.open(:user => @project.user, :repo => @project.repo,
                                    :params => { :title => title, :body => body }.merge(authentication_data))
     end
 
     # close issue
     # #=> issue
     def close(number)
-      back :issue, Giic::Core.close(:user => @project.user, :repo => @project.repo, :number => number,
+      Giic::Core.close(:user => @project.user, :repo => @project.repo, :number => number,
                                     :params => authentication_data)
     end
 
     # reopen issue
     # #=> issue
     def reopen(number)
-      back :issue, Giic::Core.reopen(:user => @project.user, :repo => @project.repo, :number => number,
+      Giic::Core.reopen(:user => @project.user, :repo => @project.repo, :number => number,
                                      :params => authentication_data)
     end
 
@@ -114,14 +116,14 @@ class Giic
     def edit(number, body, title = nil)
       edit_data = { :body => body }
       edit_data.merge!(:title => title) if title
-      back :issue, Giic::Core.edit(:user => @project.user, :repo => @project.repo, :number => number,
+      Giic::Core.edit(:user => @project.user, :repo => @project.repo, :number => number,
                                    :params => edit_data.merge(authentication_data))
     end
 
     # to operate label for issue
     # #=> labels
     def label(operate, label, number)
-      back :labels, Giic::Core.label(:user => @project.user, :repo => @project.repo, :number => number,
+      Giic::Core.label(:user => @project.user, :repo => @project.repo, :number => number,
                                      :operate => operate, :label => label,
                                      :params => authentication_data)
     end
@@ -141,7 +143,7 @@ class Giic
     # post comment to issue
     # #=> comment
     def comment(number, comment)
-      back :comment, Giic::Core.comment(:user => @project.user, :repo => @project.repo, :number => number,
+      Giic::Core.comment(:user => @project.user, :repo => @project.repo, :number => number,
                                          :params => { :comment => comment }.merge(authentication_data))
     end
 
@@ -176,10 +178,6 @@ class Giic
 
     def authentication_data # :nodoc:
       { :login => @login, :token => @token }
-    end
-
-    def back(default, result) # :nodoc:
-      @project.back default, result
     end
   end
 
