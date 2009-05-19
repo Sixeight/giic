@@ -23,14 +23,14 @@ You can install Giic using Rubygems:
   require 'giic'
 
   giic = Giic.new('Sixeight', 'giic')
-  giic.list.each do |issue|
+  giic.list.issues.each do |issue|
     puts issue.title
   end
 
   giic.login!('login name', 'api token')
 
   res = giic.login.open('awesome idea', 'I found that an awesome idea ...')
-  p res.number
+  p res.issues.number
 
   giic.login.with_project(onother) do |user|
     p user.add_label('bug', 5)
