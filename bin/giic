@@ -36,7 +36,8 @@ loop do
         next
       end
       action, *args = command.split
-      pp @giic.__send__(action, *args)
+      res = @giic.__send__(action, *args)
+      pp res.__send__(res.keys.first)
     when 'help'
       @help ||= %w[
         set login help exit quit
@@ -52,7 +53,8 @@ loop do
         next
       end
       action, *args = command.split
-      pp @giic.login.__send__(action, *args)
+      res = @giic.login.__send__(action, *args)
+      pp res.__send__(res.keys.first)
     else
       warn "no such command: #{command}"
     end
